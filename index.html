@@ -303,13 +303,6 @@
             width: fit-content;
         }
 
-        .typing-indicator.inline {
-            display: inline-flex;
-            padding: 8px 12px;
-            margin-top: 8px;
-            background: rgba(0, 0, 0, 0.05);
-        }
-
         .typing-indicator span {
             width: 8px;
             height: 8px;
@@ -729,10 +722,12 @@
             let assistantMessage = null;
             let messageBubble = null;
             let fullContent = '';
+            let currentChunkContent = '';
             let receivedConversationId = false;
             let hasReceivedContent = false;
             let lastContentTime = Date.now();
             let typingShown = false;
+            let currentTypingIndicator = null;
 
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
@@ -740,19 +735,19 @@
             const typingCheckInterval = setInterval(() => {
                 const timeSinceLastContent = Date.now() - lastContentTime;
 
-                if (assistantMessage && !typingShown && timeSinceLastContent > 500 && hasReceivedContent) {
+                if (!typingShown && timeSinceLastContent > 750 && hasReceivedContent && currentChunkContent.trim()) {
                     typingShown = true;
-                    const existingTyping = messageBubble.querySelector('.typing-indicator');
-                    if (!existingTyping) {
-                        const typingDiv = document.createElement('div');
-                        typingDiv.className = 'typing-indicator inline';
-                        typingDiv.innerHTML = `
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        `;
-                        messageBubble.appendChild(typingDiv);
+                    if (assistantMessage && currentChunkContent.trim()) {
+                        conversationHistory.push({
+                            role: 'assistant',
+                            content: currentChunkContent
+                        });
+                        fullContent += currentChunkContent;
+                        currentChunkContent = '';
+                        assistantMessage = null;
+                        messageBubble = null;
                     }
+                    currentTypingIndicator = addMessage('assistant', '', true);
                 }
             }, 100);
 
@@ -785,6 +780,12 @@
                             }
 
                             if (parsed.choices && parsed.choices[0].delta.content) {
+                                if (currentTypingIndicator) {
+                                    currentTypingIndicator.remove();
+                                    currentTypingIndicator = null;
+                                    typingShown = false;
+                                }
+
                                 if (!assistantMessage) {
                                     typingIndicator.remove();
                                     assistantMessage = addMessage('assistant', '');
@@ -792,18 +793,11 @@
                                 }
 
                                 const content = parsed.choices[0].delta.content;
-                                fullContent += content;
+                                currentChunkContent += content;
                                 hasReceivedContent = true;
                                 lastContentTime = Date.now();
-                                typingShown = false;
 
-                                // Remove typing indicator if it exists
-                                const existingTyping = messageBubble.querySelector('.typing-indicator');
-                                if (existingTyping) {
-                                    existingTyping.remove();
-                                }
-
-                                messageBubble.innerHTML = marked.parse(fullContent);
+                                messageBubble.innerHTML = marked.parse(currentChunkContent);
                                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                             } else if (parsed.choices && parsed.choices[0].delta) {
                                 lastContentTime = Date.now();
@@ -825,23 +819,21 @@
 
             clearInterval(typingCheckInterval);
 
-            // Remove any remaining typing indicator
-            if (messageBubble) {
-                const existingTyping = messageBubble.querySelector('.typing-indicator');
-                if (existingTyping) {
-                    existingTyping.remove();
-                }
+            if (currentTypingIndicator) {
+                currentTypingIndicator.remove();
+            }
+
+            if (currentChunkContent.trim()) {
+                conversationHistory.push({
+                    role: 'assistant',
+                    content: currentChunkContent
+                });
             }
 
             if (!hasReceivedContent) {
                 if (assistantMessage) {
                     assistantMessage.remove();
                 }
-            } else {
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: fullContent
-                });
             }
 
             await loadConversations();

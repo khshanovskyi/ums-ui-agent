@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import uuid
 from datetime import datetime, UTC
 from typing import Optional, AsyncGenerator
@@ -8,6 +9,7 @@ import redis.asyncio as redis
 
 from agent.clients.dial_client import DialClient
 from agent.models.message import Message, Role
+from agent.prompts import SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -153,7 +155,7 @@ class ConversationManager:
             messages.append(
                 Message(
                     role=Role.SYSTEM,
-                    content="You are an advanced AI agent. Your goal is to assist user with his questions."
+                    content=os.getenv("SYSTEM_PROMPT", SYSTEM_PROMPT)
                 )
             )
             logger.debug("Added system message to new conversation")
@@ -201,10 +203,7 @@ class ConversationManager:
 
         logger.info(
             "Non-streaming chat completed",
-            extra={
-                "conversation_id": conversation_id,
-                "response_length": len(ai_message.content or "")
-            }
+            extra={"conversation_id": conversation_id}
         )
 
         return {
@@ -220,10 +219,7 @@ class ConversationManager:
         """Save or update conversation messages"""
         logger.debug(
             "Saving conversation messages",
-            extra={
-                "conversation_id": conversation_id,
-                "message_count": len(messages)
-            }
+            extra={ "conversation_id": conversation_id}
         )
 
         conv_data = await self.redis.get(f"{CONVERSATION_PREFIX}{conversation_id}")
