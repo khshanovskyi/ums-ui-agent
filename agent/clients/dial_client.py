@@ -34,20 +34,12 @@ class DialClient:
     async def response(self, messages: list[Message]) -> Message:
         """Non-streaming completion with tool calling support"""
         #TODO:
-        # 1. Create chat completions request (self.async_openai.chat.completions.create) and get it as `response` (it is
-        #    async, don't forget about await), with:
-        #       - model=self.model
-        #       - messages=[msg.to_dict() for msg in messages]
-        #       - tools=self.tools
-        #       - temperature=0.0
-        #       - stream=False
-        # 2. Create message `ai_message` with:
-        #   - role=Role.ASSISTANT
-        #   - content=response.choices[0].message.content
+        # 1. Create chat completions request (self.async_openai.chat.completions.create) and get it as `response`
+        # 2. Create message `ai_message`
         # 3. Check if message contains tool_calls, if yes, then add them as tool_calls
         # 4. If `ai_message` contains tool calls then:
         #       - add `ai_message` to messages
-        #       - call `_call_tools(ai_message, messages)` (its async, don't forget about await)
+        #       - call `_call_tools(ai_message, messages)`
         #       - make recursive call with messages to process further
         # 5. return ai_message
         raise NotImplementedError()
@@ -58,21 +50,15 @@ class DialClient:
         Yields SSE-formatted chunks.
         """
         #TODO:
-        # 1. Create chat completions request (self.async_openai.chat.completions.create) and get it as `stream` (it is
-        #    async, don't forget about await), with:
-        #       - model=self.model
-        #       - messages=[msg.to_dict() for msg in messages]
-        #       - tools=self.tools
-        #       - temperature=0.0
-        #       - stream=True
+        # 1. Create chat completions request (self.async_openai.chat.completions.create) and get it as `stream`
         # 2. Create empty sting and assign it to `content_buffer` variable (we will collect content while streaming)
         # 3. Create empty array with `tool_deltas` variable name
         # 4. Make async loop through `stream` (async for chunk in stream):
-        #       - get delta `chunk.choices[0].delta` as `delta`
+        #       - get delta chunk
         #       - if delta contains content
         #           - create dict:{"choices": [{"delta": {"content": delta.content}, "index": 0, "finish_reason": None}]} as `chunk_data`
         #           - `yield f"data: {json.dumps(chunk_data)}\n\n"`
-        #           - concat `content_buffer` with `delta.content`
+        #           - concat `content_buffer` with delta content
         #       - if delta has tool calls then extend `tool_deltas` with `delta.tool_calls`
         # 5. If `tool_deltas` are present:
         #       - collect tool calls with `_collect_tool_calls` method and assign to the `tool_calls` variable
@@ -91,21 +77,16 @@ class DialClient:
 
     def _collect_tool_calls(self, tool_deltas):
         """Convert streaming tool call deltas to complete tool calls"""
-        tool_dict = defaultdict(lambda: {"id": None, "function": {"arguments": "", "name": None}, "type": None})
-
-        for delta in tool_deltas:
-            idx = delta.index
-            if delta.id: tool_dict[idx]["id"] = delta.id
-            if delta.function.name: tool_dict[idx]["function"]["name"] = delta.function.name
-            if delta.function.arguments: tool_dict[idx]["function"]["arguments"] += delta.function.arguments
-            if delta.type: tool_dict[idx]["type"] = delta.type
-
-        collected_tools = list(tool_dict.values())
-        logger.debug(
-            "Collected tool calls from deltas",
-            extra={"tool_count": len(collected_tools)}
-        )
-        return collected_tools
+        #TODO:
+        # 1. Create `tool_dict` with `defaultdict(lambda: {"id": None, "function": {"arguments": "", "name": None}, "type": None})`
+        # 2. Iterate through tool_deltas and:
+        #       - get delta index
+        #       - if delta has id then add it to `tool_dict[idx]["id"]`
+        #       - if delta has name (function.name) the add to `tool_dict[idx]["function"]["name"]`
+        #       - if delta has arguments (function.arguments) the add to `tool_dict[idx]["function"]["arguments"]`
+        #       - if delta has type then add it to `tool_dict[idx]["type"]`
+        # 3. Create list from `tool_dict` values and return it
+        raise NotImplementedError()
 
     async def _call_tools(self, ai_message: Message, messages: list[Message], silent: bool = False):
         """Execute tool calls using MCP client"""

@@ -31,11 +31,11 @@ class ConversationManager:
         # 1. Create conversation id `str(uuid.uuid4())`
         # 2. Create current datatime `datetime.now(UTC).isoformat()`
         # 3. Create `conversation` dict with:
-        #       - "id": conversation_id
-        #       - "title": title
-        #       - "messages": []
-        #       - "created_at": created datatime from 2nd point
-        #       - "updated_at": created datatime from 2nd point
+        #       - id - conversation_id
+        #       - title -title
+        #       - messages - []
+        #       - created_at - created datatime from 2nd point
+        #       - updated_at - created datatime from 2nd point
         # 4. Set conversation in redis (`set` is async, don't forget to await) with:
         #       - f"{CONVERSATION_PREFIX}{conversation_id}"
         #       - json.dumps(conversation)
@@ -56,11 +56,11 @@ class ConversationManager:
         #       - if conversation is present then:
         #           - load it with json (json.loads)
         #           - add to `conversations` list a dict with:
-        #               - id": conv["id"]
-        #               - "title": conv["title"]
-        #               - "created_at": conv["created_at"]
-        #               - "updated_at": conv["updated_at"]
-        #               - "message_count": len(conv["messages"])
+        #               - id - conv["id"]
+        #               - title - conv["title"]
+        #               - created_at - conv["created_at"]
+        #               - updated_at - conv["updated_at"]
+        #               - message_count - len(conv["messages"])
         # 4. return conversations
         raise NotImplementedError()
 

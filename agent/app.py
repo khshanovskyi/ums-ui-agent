@@ -46,20 +46,10 @@ async def lifespan(app: FastAPI):
     #    is tool name, value the UMS MCP Client
     # 5. Do the same as in 3 and 4 steps for Fetch MCP, url is "https://remote.mcpservers.org/fetch/mcp"
     # 6. Create StdioMCPClient for DuckDuckGo, docker image name is "mcp/duckduckgo:latest", and do the same as in 4th step
-    # 7. Initialize DialClient with:
-    #       - api_key=os.getenv("DIAL_API_KEY")
-    #       - endpoint="https://ai-proxy.lab.epam.com"
-    #       - model, here choose gpt-4o or claude-3-7-sonnet@20250219, would be perfect if you test it with both of them later
-    #       - tools=tools
-    #       - tool_name_client_map=tool_name_client_map
-    # 8. Create Redis client (redis.Redis) with:
-    #       - host=os.getenv("REDIS_HOST", "localhost")
-    #       - port=int(os.getenv("REDIS_PORT", 6379))
-    #       - decode_responses=True
-    # 9. ping to redis to check if its alive (ping method in redis client)
+    # 7. Initialize DialClient with. Models: gpt-4o or claude-3-7-sonnet@20250219, endpoint is https://ai-proxy.lab.epam.com
+    # 8. Create Redis client (redis.Redis). Host is localhost, port is 6379, and decode response
+    # 9. ping to redis to check if `its alive (ping method in redis client)
     # 10. Create ConversationManager with DIAL clien and Redis client and assign to `conversation_manager` (global variable)
-    # 11. Crea
-    # 10. Crea
     yield
 
 
@@ -101,11 +91,6 @@ class CreateConversationRequest(BaseModel):
     title: str = None
 
 
-class UpdateConversationRequest(BaseModel):
-    messages: list[Message]
-    title: Optional[str] = None
-
-
 # Endpoints
 @app.get("/health")
 async def health():
@@ -117,62 +102,17 @@ async def health():
     }
 
 
-@app.post("/conversations")
-async def create_conversation(request: CreateConversationRequest):
-    """Create a new conversation"""
-    #TODO:
-    # 1. Check if `conversation_manager` is present, if not then raise HTTPException(status_code=503, detail="Service not initialized")
-    # 2. return result of `conversation_manager` create conversation with request title (it is async, don't forget about await)
-    raise NotImplementedError()
-
-
-@app.get("/conversations")
-async def list_conversations():
-    """List all conversations sorted by last update time"""
-    #TODO:
-    # 1. Check if `conversation_manager` is present, if not then raise HTTPException(status_code=503, detail="Service not initialized")
-    # 2. Get conversations list with `conversation_manager` (it is async, don't forget about await)
-    # 3. Converts dicts to `ConversationSummary` (iterate through it and create `ConversationSummary(**conv_dict)`) and return the result
-    raise NotImplementedError()
-
-
-@app.get("/conversations/{conversation_id}")
-async def get_conversation(conversation_id: str):
-    """Get a specific conversation"""
-    #TODO:
-    # 1. Check if `conversation_manager` is present, if not then raise HTTPException(status_code=503, detail="Service not initialized")
-    # 2. Get conversation by id with `conversation_manager` (it is async, don't forget about await)
-    # 3. If no conversation was found then raise `HTTPException(status_code=404, detail="Conversation not found")`
-    # 4. return retrieved conversation
-    raise NotImplementedError()
-
-
-@app.delete("/conversations/{conversation_id}")
-async def delete_conversation(conversation_id: str):
-    """Delete a conversation"""
-    #TODO:
-    # 1. Check if `conversation_manager` is present, if not then raise HTTPException(status_code=503, detail="Service not initialized")
-    # 2. Delete conversation by id with `conversation_manager` (it is async, don't forget about await)
-    # 3. If no conversation was returned then raise `HTTPException(status_code=404, detail="Conversation not found")`
-    # 4. return `{"message": "Conversation deleted successfully"}`
-    raise NotImplementedError()
-
-
-@app.post("/conversations/{conversation_id}/chat")
-async def chat(conversation_id: str, request: ChatRequest):
-    """
-    Chat endpoint that processes messages and returns assistant response.
-    Supports both streaming and non-streaming modes.
-    Automatically saves conversation state.
-    """
-    #TODO:
-    # 1. Check if `conversation_manager` is present, if not then raise HTTPException(status_code=503, detail="Service not initialized")
-    # 2. Call chat of `conversation_manager` (await the result) with:
-    #   - user_message=request.message
-    #   - conversation_id=conversation_id
-    #   - stream=request.stream
-    # 3. If `request.stream` then return `StreamingResponse(result, media_type="text/event-stream")`, otherwise return `ChatResponse(**result)`
-    raise NotImplementedError()
+#TODO:
+# Create such endpoints:
+# 1. POST: "/conversations". Applies CreateConversationRequest and creates new conversation.
+# 2. GET: "/conversations" Extracts all conversation from storage. Returns list of ConversationSummary objects
+# 3. GET: "/conversations/{conversation_id}". Applies conversation_id string and extracts from storage full conversation
+# 4. DELETE: "/conversations/{conversation_id}". Applies conversation_id string and deletes conversation. Returns dict
+#    with message with info if conversation has been deleted
+# 5. POST: "/conversations/{conversation_id}/chat". Chat endpoint that processes messages and returns assistant response.
+#    Supports both streaming and non-streaming modes.
+#    Applies conversation_id and ChatRequest.
+#    If `request.stream` then return `StreamingResponse(result, media_type="text/event-stream")`, otherwise return `ChatResponse(**result)`
 
 
 if __name__ == "__main__":

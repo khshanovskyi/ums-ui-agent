@@ -486,22 +486,18 @@
 
     async function loadConversations() {
         try {
-            const response = await fetch(`${API_URL}/conversations`);
-            const conversations = await response.json();
-
-            conversationsList.innerHTML = '';
-
-            if (conversations.length === 0) {
-                conversationsList.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: #6c757d;">
-                        No conversations yet. Click "New Chat" to start!
-                    </div>
-                `;
-            } else {
-                conversations.forEach(conv => {
-                    addConversationToSidebar(conv);
-                });
-            }
+            //TODO:
+            // 1. Call `await fetch(`${API_URL}/conversations`)` and assign result as `response` variable
+            // 2. Get json from response `await response.json()` and assign to `conversations` variable
+            // 3. Clean conversations list `conversationsList.innerHTML = ''`
+            // 4. If `conversations` length is 0 then set `conversationsList.innerHTML` as
+            //    - '
+            //    <div style="text-align: center; padding: 20px; color: #6c757d;">
+            //        No conversations yet. Click "New Chat" to start!
+            //    </div>
+            //    '
+            //    otherwise iterate through `conversations` and call for each conversation the `addConversationToSidebar` function
+            throw new Error('Not implemented');
         } catch (error) {
             console.error('Error loading conversations:', error);
             conversationsList.innerHTML = `
@@ -549,16 +545,14 @@
 
     async function loadConversation(conversationId) {
         try {
-            const response = await fetch(`${API_URL}/conversations/${conversationId}`);
-            if (!response.ok) throw new Error('Conversation not found');
-
-            const conversation = await response.json();
-
-            currentConversationId = conversationId;
-            conversationHistory = conversation.messages || [];
-
-            updateActiveConversation();
-            renderMessages();
+            //TODO:
+            // 1. Call `await fetch`${API_URL}/conversations/${conversationId}`);` and assign result as `response` variable
+            // 2. if respons is not ok then throw new Error('Conversation not found')
+            // 3. Get json from response `await response.json()` and assign to `conversation` variable
+            // 4. Set `currentConversationId` as `conversationId`
+            // 5. Set  `conversationHistory` as ` conversation.messages || []`
+            // 6. Call `updateActiveConversation` and `renderMessages` functions
+            throw new Error('Not implemented');
         } catch (error) {
             console.error('Error loading conversation:', error);
         }
@@ -602,26 +596,20 @@
     }
 
     async function deleteConversation(event, conversationId) {
-        event.stopPropagation();
-
-        if (!confirm('Are you sure you want to delete this conversation?')) {
-            return;
-        }
+        //TODO:
+        // 1. Call `event.stopPropagation()`
+        // 2. Make pop-up with `if (!confirm('Are you sure you want to delete this conversation?')) {return;}`
 
         try {
-            const response = await fetch(`${API_URL}/conversations/${conversationId}`, {
-                method: 'DELETE'
-            });
-
-            if (!response.ok) throw new Error('Failed to delete conversation');
-
-            if (conversationId === currentConversationId) {
-                currentConversationId = null;
-                conversationHistory = [];
-                renderMessages();
-            }
-
-            await loadConversations();
+            //TODO:
+            // 1. Call `await fetch(`${API_URL}/conversations/${conversationId}`, {method: 'DELETE'});` as `response`
+            // 2. If response is not ok then throw new Error('Failed to delete conversation')
+            // 3. If `conversationId` equals `currentConversationId` then:
+            //      - set `currentConversationId` as null
+            //      - set `conversationHistory` as empty array
+            //      - call `renderMessages` func
+            // 4. Call `await loadConversations()`
+            throw new Error('Not implemented');
         } catch (error) {
             console.error('Error deleting conversation:', error);
         }
@@ -671,53 +659,29 @@
     }
 
     async function streamResponse(userMessage) {
-        isStreaming = true;
-        sendButton.disabled = true;
-
-        const usermsg = {
-            role: 'user',
-            content: userMessage
-        };
-        addMessage('user', userMessage);
-
-        const typingIndicator = addMessage('assistant', '', true);
+        //TODO:
+        // 1. Set `isStreaming` as true
+        // 2. Set `sendButton.disabled` as true
+        // 3. Create `usermsg` dict with:
+        //      - role: 'user'
+        //      - content: userMessage
+        // 4. Call func `addMessage` with role 'user' and `userMessage`
+        // 5. Create `typingIndicator` variable  from `addMessage('assistant', '', true)`
+        throw new Error('Not implemented');
 
         try {
-            if (!currentConversationId) {
-                const createResponse = await fetch(`${API_URL}/conversations`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        title: userMessage.length > 50 ? userMessage.substring(0, 50) + '...' : userMessage
-                    })
-                });
-
-                if (!createResponse.ok) {
-                    throw new Error('Failed to create conversation');
-                }
-
-                const newConversation = await createResponse.json();
-                currentConversationId = newConversation.id;
-
-                await loadConversations();
-            }
-
-            const response = await fetch(`${API_URL}/conversations/${currentConversationId}/chat`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: usermsg,
-                    stream: true
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            //TODO:
+            // 1. If not `currentConversationId` then we need to create a new conversation:
+            //      - Call `await fetch(`${API_URL}/conversations`, {method: 'POST', headers: {'Content-Type': 'application
+            //        /json'}, body: JSON.stringify({title: userMessage.length > 50 ? userMessage.substring(0, 50) + '...' : userMessage})})`
+            //        as `createConversationResponse`
+            //      - if createConversationResponse is not ok then throw new Error('Failed to create conversation')
+            //      - Get json from response `await createConversationResponse.json()` and assign to `newConversation` variable
+            //      - set `currentConversationId` as `newConversation.id`
+            //      - call `await loadConversations()`
+            // 2. Call `await fetch(`${API_URL}/conversations/${currentConversationId}/chat`, {method: 'POST', headers: {
+            //    'Content-Type': 'application/json'}, body: JSON.stringify({message: usermsg, stream: true})})` as `response`
+            // 3. If response is not ok then throw new Error(`HTTP error! status: ${response.status}`)
 
             let assistantMessage = null;
             let messageBubble = null;

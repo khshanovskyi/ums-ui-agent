@@ -32,7 +32,13 @@ In this task you will need to implement an Agent with classical Tool use patten 
 6. Implement all TODO blocks in [app](agent/app.py)
 7. Run [docker-compose](docker-compose.yml) with UMS, UMS MCP and Redis
 8. Start application [app](agent/app.py)
-9. Open in browser [index.html](index.html) and test your agent
+9. Optional: You can test API with Postman
+10. Implement all TODO blocks in [index.html](index.html)
+    - `loadConversations` function
+    - `loadConversation`
+    - `deleteConversation`
+    - `streamResponse`
+11. Open in browser [index.html](index.html) and test your agent
 
 ## 🏗️ Architecture
 
