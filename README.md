@@ -1,4 +1,4 @@
-# Users Management Agents
+# Users Management Agent
 
 **Create Production ready Agent with Tool use pattern and MCP**
 
@@ -7,9 +7,9 @@ In this task you will need to implement an Agent with classical Tool use patten 
 - Will use UI chat with response streaming
 - All the conversations must be stored in the Redis storage
 - As tools, we will use tools from 3 different MCP Servers
-  - UMS MCP: Server that works with UMS Service, we will run it locally from docker-compose
-  - Fetch MCP: Remote Server that has tools to fetch WEB content
-  - DucDuckGo: Will run it locally (with application start in docker container), provides with WEB Search capabilities
+    - UMS MCP: Server that works with UMS Service, we will run it locally from docker-compose
+    - Fetch MCP: Remote Server that has tools to fetch WEB content
+    - DucDuckGo: Will run it locally (with application start in docker container), provides with WEB Search capabilities
 - Auth will be skipped in this task
 
 ## 📋 Requirements
@@ -40,6 +40,10 @@ In this task you will need to implement an Agent with classical Tool use patten 
     - `streamResponse`
 11. Open in browser [index.html](index.html) and test your agent
 
+## Additional Task
+
+**Since agent is working with PII it seems that we need to handle the cases with Credit card information disclosure.**
+
 ## 🏗️ Architecture
 
 ```
@@ -57,10 +61,14 @@ In this task you will need to implement an Agent with classical Tool use patten 
 ├── docker-compose.yml             ✅ Complete
 └── index.html                     ⚠️ TODO: implement logic
 ```
-### <img src="/flow_diagrams/general_flow.png">
-### <img src="/flow_diagrams/chat-agent_communication_flow.png">
-### <img src="/flow_diagrams/ui-chat.png">
+
+<img src="/flow_diagrams/general_flow.png" alt="General Flow Diagram" />
+
+<img src="/flow_diagrams/chat-agent_communication_flow.png" alt="Communication Flow" />
+
+<img src="/flow_diagrams/ui-chat.png" alt="UI Chat" />
 
 ## Redis insight
+
 - You can connect to Redis Insight by URL http://localhost:6380
 - To see the conversations add database with URL `redis-ums:6379`
