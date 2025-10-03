@@ -21,6 +21,9 @@ In this task you will need to implement an Agent with classical Tool use patten 
 - Docker and Docker Compose
 
 ## Task
+
+### If the task in the main branch is hard for you, then switch to the `with-detailed-description` branch
+
 1. Implement all TODO blocks in [http_mcp_client](agent/clients/http_mcp_client.py)
 2. Implement all TODO blocks in [stdio_mcp_client](agent/clients/stdio_mcp_client.py)
 3. Implement all TODO blocks in [dial_client](agent/clients/dial_client.py)
