@@ -55,7 +55,7 @@ In this task you will need to implement an Agent with classical Tool use patten 
 │   ├── conversation_manager.py    ⚠️ TODO: implement logic
 │   └── prompts.py                 ⚠️ TODO: write prompt
 ├── docker-compose.yml             ✅ Complete
-└── index.html                     ✅ Complete
+└── index.html                     ⚠️ TODO: implement logic
 ```
 ### <img src="/flow_diagrams/general_flow.png">
 ### <img src="/flow_diagrams/chat-agent_communication_flow.png">
