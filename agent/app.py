@@ -100,12 +100,6 @@ class ConversationSummary(BaseModel):
 class CreateConversationRequest(BaseModel):
     title: str = None
 
-
-class UpdateConversationRequest(BaseModel):
-    messages: list[Message]
-    title: Optional[str] = None
-
-
 # Endpoints
 @app.get("/health")
 async def health():
