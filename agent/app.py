@@ -58,8 +58,6 @@ async def lifespan(app: FastAPI):
     #       - decode_responses=True
     # 9. ping to redis to check if its alive (ping method in redis client)
     # 10. Create ConversationManager with DIAL clien and Redis client and assign to `conversation_manager` (global variable)
-    # 11. Crea
-    # 10. Crea
     yield
 
 
